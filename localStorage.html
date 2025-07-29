@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>localStorage 예제</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        input, button { margin-bottom: 10px; padding: 8px; }
+        #output { margin-top: 20px; border: 1px solid #ccc; padding: 10px; min-height: 50px; }
+    </style>
+</head>
+<body>
+    <h1>localStorage 예제</h1>
+
+    <div>
+        <label for="userName">이름:</label>
+        <input type="text" id="userName" placeholder="이름을 입력하세요">
+    </div>
+    <div>
+        <label for="userAge">나이:</label>
+        <input type="number" id="userAge" placeholder="나이를 입력하세요">
+    </div>
+
+    <button onclick="saveData()">데이터 저장</button>
+    <button onclick="loadData()">데이터 불러오기</button>
+    <button onclick="clearData()">데이터 삭제</button>
+    <button onclick="saveObject()">객체 저장</button>
+    <button onclick="loadObject()">객체 불러오기</button>
+
+    <h2>결과:</h2>
+    <div id="output"></div>
+
+    <script>
+        const userNameInput = document.getElementById('userName');
+        const userAgeInput = document.getElementById('userAge');
+        const outputDiv = document.getElementById('output');
+
+        // 1. 데이터 저장 (setItem)
+        function saveData() {
+            const name = userNameInput.value;
+            const age = userAgeInput.value;
+
+            if (name && age) {
+                // key-value 형태로 저장. 값은 항상 문자열!
+                localStorage.setItem('userName', name);
+                localStorage.setItem('userAge', age);
+                outputDiv.textContent = `이름: '${name}', 나이: '${age}'이(가) localStorage에 저장되었습니다.`;
+            } else {
+                outputDiv.textContent = '이름과 나이를 모두 입력해주세요.';
+            }
+        }
+
+        // 2. 데이터 불러오기 (getItem)
+        function loadData() {
+            // key를 사용하여 값 불러오기
+            const name = localStorage.getItem('userName');
+            const age = localStorage.getItem('userAge');
+
+            if (name || age) {
+                outputDiv.textContent = `localStorage에서 불러온 데이터: 이름 - ${name || '없음'}, 나이 - ${age || '없음'}`;
+            } else {
+                outputDiv.textContent = 'localStorage에 저장된 데이터가 없습니다.';
+            }
+        }
+
+        // 3. 특정 데이터 삭제 (removeItem)
+        function clearData() {
+            // 'userName'과 'userAge' 키를 가진 데이터만 삭제
+            localStorage.removeItem('userName');
+            localStorage.removeItem('userAge');
+            localStorage.removeItem('currentUser')
+            outputDiv.textContent = '이름과 나이 데이터가 localStorage에서 삭제되었습니다.';
+        }
+
+        // 4. 모든 데이터 삭제 (clear) - 주석 처리하여 필요시 사용
+        /*
+        function clearAllData() {
+            localStorage.clear(); // localStorage에 저장된 모든 데이터를 삭제합니다.
+            outputDiv.textContent = 'localStorage의 모든 데이터가 삭제되었습니다.';
+        }
+        */
+
+        // 5. 객체 저장 예제 (JSON.stringify 활용)
+        function saveObject() {
+            const name = userNameInput.value;
+            const age = userAgeInput.value;
+
+            if (name && age) {
+                const user = {
+                    name: name,
+                    age: parseInt(age) // 나이는 숫자로 저장
+                };
+                // 객체를 JSON 문자열로 변환하여 저장
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                sessionStorage.setItem('currentUser', JSON.stringify(user));
+                outputDiv.textContent = `객체 '${JSON.stringify(user)}'가(이) localStorage에 저장되었습니다.`;
+                console.log(JSON.stringify(user))
+            } else {
+                outputDiv.textContent = '이름과 나이를 모두 입력해주세요.';
+            }
+        }
+
+        // 6. 객체 불러오기 예제 (JSON.parse 활용)
+        function loadObject() {
+            // JSON 문자열로 저장된 객체를 불러옴
+            const userString = localStorage.getItem('currentUser');
+
+            if (userString) {
+                // JSON 문자열을 다시 객체로 변환
+                const user = JSON.parse(userString);
+                outputDiv.textContent = `localStorage에서 불러온 객체: 이름 - ${user.name}, 나이 - ${user.age}`;
+                // 불러온 데이터를 입력 필드에 다시 채우기
+                userNameInput.value = user.name;
+                userAgeInput.value = user.age;
+            } else {
+                outputDiv.textContent = '저장된 사용자 객체가 없습니다.';
+            }
+        }
+    </script>
+</body>
+</html>
